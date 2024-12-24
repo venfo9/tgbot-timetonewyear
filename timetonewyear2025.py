@@ -44,6 +44,8 @@ async def main():
     # Используем порт, предоставленный Render
     port = int(os.getenv("PORT", 8443))  # Default to 8443 if not set
 
+    # Вместо создания нового цикла, используем уже существующий
+    loop = asyncio.get_event_loop()
     await app.run_webhook(
         listen="0.0.0.0",
         port=port,
@@ -51,6 +53,4 @@ async def main():
     )
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.create_task(main())
-    loop.run_forever()
+    asyncio.run(main())  # Используем asyncio.run для запуска main() без ошибок с event loop
