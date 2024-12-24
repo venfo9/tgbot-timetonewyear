@@ -35,8 +35,8 @@ async def main():
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("time", time_to_new_year))
 
-    # Установка вебхука
-    webhook_url = f"https://tgbot-timetonewyear.onrender.com"  # Замените на ваш URL
+    # Установка вебхука с вашим URL
+    webhook_url = "https://tgbot-timetonewyear.onrender.com"  # Ваш URL для вебхука
     await app.bot.set_webhook(webhook_url)
 
     # Запуск бота с вебхуком
@@ -49,4 +49,7 @@ async def main():
 # Запуск основного процесса
 if __name__ == '__main__':
     import asyncio
-    asyncio.run(main())
+    # Убираем asyncio.run(main()) и просто используем await
+    loop = asyncio.get_event_loop()
+    loop.create_task(main())
+    loop.run_forever()
