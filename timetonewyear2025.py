@@ -39,14 +39,14 @@ async def main():
     webhook_url = "https://tgbot-timetonewyear.onrender.com"  # Ваш URL для вебхука
     await app.bot.set_webhook(webhook_url)
 
-    # Запуск бота с вебхуком
+    # Запуск бота с вебхуком (без asyncio.run())
     await app.run_webhook(
         listen="0.0.0.0",  # Слушаем все IP-адреса
         port=int(os.getenv("PORT", 8443)),  # Указываем порт, который предоставляет Render
         webhook_url=webhook_url
     )
 
-# Запуск основного процесса
+# Запуск основного процесса (без asyncio.run())
 if __name__ == '__main__':
     import asyncio
-    asyncio.run(main())  # Запуск main() с asyncio.run()
+    asyncio.create_task(main())  # Не используем asyncio.run(), чтобы избежать конфликта с существующим циклом
