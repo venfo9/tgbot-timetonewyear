@@ -41,7 +41,7 @@ async def main():
     await app.bot.set_webhook(webhook_url)
 
     # Получаем порт из переменной окружения
-    port = int(os.getenv("PORT", 8443))  # Если переменная окружения PORT не найдена, используем 8443
+    port = int(os.getenv("PORT", 10000))  # Если переменная окружения PORT не найдена, используем 10000
 
     # Запуск бота с вебхуком
     await app.run_webhook(
