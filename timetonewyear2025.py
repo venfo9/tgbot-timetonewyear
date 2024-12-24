@@ -51,7 +51,7 @@ def main():
     app.run_webhook(
         listen="0.0.0.0",
         port=int(os.getenv("PORT", 8443)),
-        webhook_url=f"https://<your_render_service_url>"
+        webhook_url=f"https://tgbot-timetonewyear.onrender.com"
     )
 
 if __name__ == '__main__':
