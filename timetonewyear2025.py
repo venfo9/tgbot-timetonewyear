@@ -46,7 +46,12 @@ async def main():
         webhook_url=webhook_url
     )
 
-# Запуск основного процесса (без asyncio.run())
+# Запуск основного процесса с правильным использованием event loop
 if __name__ == '__main__':
     import asyncio
-    asyncio.create_task(main())  # Не используем asyncio.run(), чтобы избежать конфликта с существующим циклом
+    # Если event loop не запущен, мы создаем его
+    try:
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(main())
+    except RuntimeError:
+        asyncio.run(main())  # Только если loop не был найден
