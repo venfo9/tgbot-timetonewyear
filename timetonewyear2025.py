@@ -32,13 +32,16 @@ async def main():
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("time", time_to_new_year))
 
-    # Ensure the webhook URL is correct
-    webhook_url = f"https://{os.getenv('RENDER_EXTERNAL_URL')}/"
-    print(f"Setting webhook to: {webhook_url}")
+    # Заменяем URL на ваш собственный
+    webhook_url = "https://tgbot-timetonewyear.onrender.com/"
+    print(f"Setting webhook to: {webhook_url}")  # Выводим URL для отладки
 
-    await app.bot.set_webhook(webhook_url)
+    try:
+        await app.bot.set_webhook(webhook_url)
+    except Exception as e:
+        print(f"Error setting webhook: {e}")
 
-    # Use the PORT environment variable from Render
+    # Используем порт, предоставленный Render
     port = int(os.getenv("PORT", 8443))  # Default to 8443 if not set
 
     await app.run_webhook(
