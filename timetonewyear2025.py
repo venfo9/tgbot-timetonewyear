@@ -41,11 +41,12 @@ async def main():
 
     # Запуск бота с вебхуком
     await app.run_webhook(
-        listen="0.0.0.0",
-        port=int(os.getenv("PORT", 8443)),
+        listen="0.0.0.0",  # Слушаем все IP-адреса
+        port=int(os.getenv("PORT", 8443)),  # Указываем порт, который предоставляет Render
         webhook_url=webhook_url
     )
 
 # Запуск основного процесса
 if __name__ == '__main__':
-    main()
+    import asyncio
+    asyncio.run(main())  # Запуск main() с asyncio.run()
