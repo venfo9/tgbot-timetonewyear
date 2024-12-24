@@ -40,10 +40,13 @@ async def main():
     webhook_url = "https://tgbot-timetonewyear.onrender.com"  # Ваш URL для вебхука
     await app.bot.set_webhook(webhook_url)
 
+    # Получаем порт из переменной окружения
+    port = int(os.getenv("PORT", 8443))  # Если переменная окружения PORT не найдена, используем 8443
+
     # Запуск бота с вебхуком
     await app.run_webhook(
         listen="0.0.0.0",  # Слушаем все IP-адреса
-        port=int(os.getenv("PORT", 8443)),  # Указываем порт, который предоставляет Render
+        port=port,  # Указываем порт
         webhook_url=webhook_url
     )
 
