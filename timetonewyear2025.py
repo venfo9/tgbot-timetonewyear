@@ -36,22 +36,22 @@ async def main():
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("time", time_to_new_year))
 
-    # Установка вебхука с вашим URL
-    webhook_url = "https://tgbot-timetonewyear.onrender.com"  # Ваш URL для вебхука
-    await app.bot.set_webhook(webhook_url)
-
     # Получаем порт из переменной окружения
-    port = int(os.getenv("PORT", 10000))  # Если переменная окружения PORT не найдена, используем 10000
+    port = int(os.getenv("PORT", 8443))  # Render автоматически передает PORT
+    webhook_url = f"https://{os.getenv('RENDER_EXTERNAL_URL')}/"  # Используем RENDER_EXTERNAL_URL для вебхука
+
+    # Установка вебхука с правильным URL
+    await app.bot.set_webhook(webhook_url)
 
     # Запуск бота с вебхуком
     await app.run_webhook(
         listen="0.0.0.0",  # Слушаем все IP-адреса
-        port=port,  # Указываем порт
+        port=port,  # Используем правильный порт
         webhook_url=webhook_url
     )
 
 # Запуск основного процесса с правильным использованием event loop
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()  # Get the running event loop
-    loop.create_task(main())  # Create a task for the main coroutine
-    loop.run_forever()  # Keep the loop running indefinitely
+    loop = asyncio.get_event_loop()  # Получаем текущий event loop
+    loop.create_task(main())  # Создаем задачу для main
+    loop.run_forever()  # Запускаем loop бесконечно
