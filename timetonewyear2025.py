@@ -36,7 +36,7 @@ async def main():
     app.add_handler(CommandHandler("time", time_to_new_year))
 
     # Установка вебхука
-    webhook_url = f"https://<your_render_service_url>"  # Замените на ваш URL
+    webhook_url = f"https://tgbot-timetonewyear.onrender.com"  # Замените на ваш URL
     await app.bot.set_webhook(webhook_url)
 
     # Запуск бота с вебхуком
