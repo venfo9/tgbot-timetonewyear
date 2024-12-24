@@ -1,3 +1,4 @@
+import asyncio
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 from datetime import datetime
@@ -39,7 +40,7 @@ async def main():
     webhook_url = "https://tgbot-timetonewyear.onrender.com"  # Ваш URL для вебхука
     await app.bot.set_webhook(webhook_url)
 
-    # Запуск бота с вебхуком (без asyncio.run())
+    # Запуск бота с вебхуком
     await app.run_webhook(
         listen="0.0.0.0",  # Слушаем все IP-адреса
         port=int(os.getenv("PORT", 8443)),  # Указываем порт, который предоставляет Render
@@ -48,10 +49,6 @@ async def main():
 
 # Запуск основного процесса с правильным использованием event loop
 if __name__ == '__main__':
-    import asyncio
-    # Если event loop не запущен, мы создаем его
-    try:
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(main())
-    except RuntimeError:
-        asyncio.run(main())  # Только если loop не был найден
+    loop = asyncio.get_event_loop()  # Get the running event loop
+    loop.create_task(main())  # Create a task for the main coroutine
+    loop.run_forever()  # Keep the loop running indefinitely
