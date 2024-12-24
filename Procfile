@@ -1,0 +1,1 @@
+worker: python timetonewyear2025.py
