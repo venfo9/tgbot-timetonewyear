@@ -3,34 +3,37 @@ from telegram.ext import Application
 import os
 import json
 
-# Получение токена бота из переменных окружения
+# Получение токена из переменных окружения
 TOKEN = os.getenv("BOT_TOKEN")
-
-# Создание приложения Telegram
 app = Application.builder().token(TOKEN).build()
 
-async def handler(request):
+async def process_update(request):
+    """Обработка входящего запроса от Telegram."""
     try:
-        # Проверка метода запроса
-        if request.method != "POST":
+        if request.method == "POST":
+            # Чтение JSON-данных из запроса
+            body = await request.body()
+            json_data = json.loads(body)
+
+            # Десериализация обновления Telegram
+            update = Update.de_json(json_data, app.bot)
+
+            # Обработка обновления
+            await app.process_update(update)
+            return {
+                "statusCode": 200,
+                "body": json.dumps({"status": "ok"})
+            }
+        else:
             return {
                 "statusCode": 405,
                 "body": json.dumps({"error": "Method Not Allowed"})
             }
-
-        # Получение данных запроса
-        json_data = await request.json()
-        update = Update.de_json(json_data, app.bot)
-
-        # Обработка обновления
-        await app.process_update(update)
-        return {
-            "statusCode": 200,
-            "body": json.dumps({"status": "ok"})
-        }
     except Exception as e:
-        # Обработка ошибок
         return {
             "statusCode": 500,
             "body": json.dumps({"error": str(e)})
         }
+
+# Это важно: определение обработчика для Vercel
+handler = process_update
