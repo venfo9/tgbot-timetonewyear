@@ -1,1 +1,1 @@
-web: python timetonewyear2025.py
+web: python3 timetonewyear2025.py
