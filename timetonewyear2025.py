@@ -4,6 +4,9 @@ from telegram.ext import Application, CommandHandler, ContextTypes
 from datetime import datetime
 import os
 
+TOKEN = os.getenv("BOT_TOKEN")
+app = Application.builder().token(TOKEN).build()
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(
         'Привет! Напиши /time, чтобы узнать, сколько дней, минут и секунд осталось до Нового года.\n'
@@ -26,8 +29,7 @@ async def time_to_new_year(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     )
 
 async def main():
-    TOKEN = os.getenv("BOT_TOKEN")
-    app = Application.builder().token(TOKEN).build()
+
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("time", time_to_new_year))
