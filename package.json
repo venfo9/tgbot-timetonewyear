@@ -4,6 +4,7 @@
   "dependencies": {
     "telegraf": "^4.7.0",
     "luxon": "^3.0.1",
+    "moment-timezone": "^0.5.34",
     "telebot": "^1.4.1",
     "telebot-vercel": "^1.0.1"
   }
