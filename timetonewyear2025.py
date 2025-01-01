@@ -48,7 +48,7 @@ async def main():
         return
 
     # Настройка сервера
-    port = int(os.getenv("PORT", 8080))  # 8080 по умолчанию
+    port = int(os.environ.get("PORT", 8080))  # 8080 по умолчанию
     print(f"Starting server on port {port}...")
     
     # Запуск веб-сервера
