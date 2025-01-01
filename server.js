@@ -41,7 +41,7 @@ const timeToNewYear = async (ctx) => {
 bot.command('start', start);
 bot.command('time', timeToNewYear);
 
-bot.telegram.setWebhook(`https://tgbot-timetonewyear.onrender.com`);
+bot.telegram.setWebhook(`https://tgbot-timetonewyear.onrender.com/api/webhook`);
 
 // Сервер для работы с вебхуками
 app.post('/api/webhook', async (req, res) => {
