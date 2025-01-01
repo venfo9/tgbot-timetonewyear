@@ -6,6 +6,7 @@ const process = require('process');
 // Получаем токен из переменных окружения
 const TOKEN = process.env.BOT_TOKEN;
 const bot = new Telegraf(TOKEN);
+console.log("Bot token: ", process.env.BOT_TOKEN);
 
 // Часовой пояс для вашего региона
 const timezoneOffset = 2; // UTC +2, например
