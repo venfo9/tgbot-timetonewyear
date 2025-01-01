@@ -1,25 +1,13 @@
 const { Telegraf } = require('telegraf');
 const { DateTime } = require('luxon'); // Для удобной работы с датами
 const process = require('process');
-const pTimeout = require('p-timeout'); // Подключаем p-timeout
 
+// Получаем токен из переменных окружения
 const TOKEN = process.env.BOT_TOKEN;
 const bot = new Telegraf(TOKEN);
 
-// Функция отправки сообщений с увеличенным тайм-аутом
-const sendMessage = async (ctx, message) => {
-  try {
-    console.log('Sending message:', message);  // Логирование отправляемого сообщения
-    // Используем p-timeout для тайм-аута в 90 секунд
-    await pTimeout(ctx.reply(message), 90000, 'Sending message timed out');
-  } catch (error) {
-    console.error('Error sending message:', error);
-  }
-};
-
 const start = async (ctx) => {
-  await sendMessage(
-    ctx, 
+  await ctx.reply(
     'Привет! Напиши /time, чтобы узнать, сколько дней, минут и секунд осталось до Нового года.\n' +
     'Hello! Type /time to find out how many days, minutes, and seconds are left until New Year.'
   );
@@ -32,10 +20,9 @@ const timeToNewYear = async (ctx) => {
 
   const { days, hours, minutes, seconds } = timeLeft;
 
-  await sendMessage(
-    ctx, 
-    `До Нового года осталось ${days} дней, ${hours} часов, ${minutes} минут и ${seconds} секунд!\n` +
-    `${days} days, ${hours} hours, ${minutes} minutes, and ${seconds} seconds left until New Year!`
+  await ctx.reply(
+    До Нового года осталось ${days} дней, ${hours} часов, ${minutes} минут и ${seconds} секунд!\n +
+    ${days} days, ${hours} hours, ${minutes} minutes, and ${seconds} seconds left until New Year!
   );
 };
 
