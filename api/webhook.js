@@ -24,6 +24,7 @@ const calculateTimeToNewYear = () => {
 };
 
 const startCommand = async (ctx) => {
+  console.log("Start command received.");
   await ctx.reply(
     'Hello! 😎\nHow it works?\n\n' +
     '"/timezone +2" - set your timezone (for example, +2 hours)\n' +
@@ -35,6 +36,7 @@ const startCommand = async (ctx) => {
 };
 
 const timeCommand = async (ctx) => {
+  console.log("Time command received.");
   const { days, hours, minutes, seconds } = calculateTimeToNewYear();
   await ctx.reply(
     `${days} days, ${hours} hours, and ${minutes} minutes\nTimezone: UTC ${timezoneOffset >= 0 ? '+' + timezoneOffset : timezoneOffset}\n\n🥳🥳🥳`
@@ -42,7 +44,10 @@ const timeCommand = async (ctx) => {
 };
 
 const intervalCommand = async (ctx) => {
+  console.log("Interval command received. Args:", ctx.message.text.split(' '));
+
   if (!ctx.message.text.split(' ')[1]) {
+    console.log("No argument provided for interval.");
     return await ctx.reply(
       'Enter the interval in minutes or hours for automatic messages about the time until New Year.\n' +
       'Interval format: number (e.g. "/interval 1" for 1 minute).\n' +
@@ -53,6 +58,7 @@ const intervalCommand = async (ctx) => {
   const userInput = ctx.message.text.split(' ')[1];
   
   if (userInput === '-') {
+    console.log("Disabling interval...");
     clearInterval(interval);
     interval = null;
     if (sendTask) {
@@ -65,6 +71,7 @@ const intervalCommand = async (ctx) => {
   const intervalInMinutes = parseInt(userInput);
   
   if (isNaN(intervalInMinutes) || intervalInMinutes <= 0) {
+    console.log("Invalid interval value:", userInput);
     return await ctx.reply(
       'Error! Invalid interval format. Please use a valid positive number.\n' +
       'Interval format: number (e.g. "/interval 1" for 1 minute).\n' +
@@ -77,6 +84,7 @@ const intervalCommand = async (ctx) => {
 
   // Если задача уже существует, останавливаем её перед установкой новой
   if (sendTask) {
+    console.log("Clearing existing interval task...");
     clearInterval(sendTask);
     sendTask = null;
   }
@@ -98,6 +106,7 @@ const intervalCommand = async (ctx) => {
 };
 
 const timezoneCommand = async (ctx) => {
+  console.log("Timezone command received.");
   const newOffset = parseInt(ctx.message.text.split(' ')[1]);
 
   if (isNaN(newOffset)) {
