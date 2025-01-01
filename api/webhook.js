@@ -53,12 +53,9 @@ const intervalCommand = async (ctx) => {
   const userInput = ctx.message.text.split(' ')[1];
   
   if (userInput === '-') {
-    clearInterval(interval);
+    clearInterval(sendTask);
+    sendTask = null;
     interval = null;
-    if (sendTask) {
-      sendTask.stop();
-      sendTask = null;
-    }
     return await ctx.reply('Interval disabled 😢');
   }
 
@@ -84,7 +81,7 @@ const intervalCommand = async (ctx) => {
   sendTask = setInterval(async () => {
     const { days, hours, minutes, seconds } = calculateTimeToNewYear();
     try {
-      // Проверка на активность бота
+      // Проверка на активность чата
       if (!ctx.chat) return;
       await ctx.reply(
         `${days} days, ${hours} hours, and ${minutes} minutes\nTimezone: UTC ${timezoneOffset >= 0 ? '+' + timezoneOffset : timezoneOffset}\n\n🥳🥳🥳\n\nThis is an automatic message! To stop, type "/interval -".`
@@ -113,4 +110,9 @@ bot.command('time', timeCommand);
 bot.command('interval', intervalCommand);
 bot.command('timezone', timezoneCommand);
 
-bot.launch();
+// Обработка сообщений и запуск бота
+bot.launch().then(() => {
+  console.log('Бот запущен...');
+  // Ensure the bot is running and keeps processing updates
+  bot.stop('SIGINT');  // Stopping gracefully on interrupt signals
+});
