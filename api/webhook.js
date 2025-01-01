@@ -2,6 +2,23 @@ const { Telegraf } = require('telegraf');
 const { DateTime } = require('luxon'); // Для удобной работы с датами
 const process = require('process');
 
+module.exports = async (req, res) => {
+  if (req.method === 'POST') {
+    try {
+      // Обработка входящего запроса
+      await bot.handleUpdate(req.body, res);
+      return res.status(200).json({ status: 'ok' });
+    } catch (e) {
+      console.error('Error processing update:', e);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+  } else {
+    console.log('Method not allowed: ', req.method);
+    return res.status(405).json({ error: 'Method Not Allowed' });
+  }
+};
+
+
 // Получаем токен из переменных окружения
 const TOKEN = process.env.BOT_TOKEN;
 const bot = new Telegraf(TOKEN);
