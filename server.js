@@ -110,7 +110,7 @@ bot.command('timezone', async (ctx) => {
 });
 
 // Set webhook
-bot.telegram.setWebhook('https://your-render-url.onrender.com/api/webhook');
+bot.telegram.setWebhook('https://tgbot-timetonewyear.onrender.com/api/webhook');
 
 // Webhook route
 app.post('/api/webhook', async (req, res) => {
