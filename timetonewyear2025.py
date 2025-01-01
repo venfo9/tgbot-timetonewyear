@@ -45,12 +45,8 @@ async def main():
     port = int(os.getenv("PORT", 8443))  # Default to 8443 if not set
 
     # Вместо создания нового цикла, используем уже существующий
-    loop = asyncio.get_event_loop()
-    await app.run_webhook(
-        listen="0.0.0.0",
-        port=port,
-        webhook_url=webhook_url
-    )
+    print('Бот запущен...')
+    app.run_polling()
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    main()
