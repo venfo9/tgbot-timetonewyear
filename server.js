@@ -55,7 +55,7 @@ app.post('/api/webhook', async (req, res) => {
 });
 
 // Запуск сервера на Render
-const port = process.env.PORT || 3000;  // Порт для Render
+const port = process.env.PORT || 10000;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
