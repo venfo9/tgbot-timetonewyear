@@ -1,116 +1,59 @@
 const { Telegraf } = require('telegraf');
+const { DateTime } = require('luxon');
+const express = require('express');
 const process = require('process');
-const moment = require('moment-timezone');  // Для работы с временными зонами
 
+// Получаем токен из переменных окружения
 const TOKEN = process.env.BOT_TOKEN;
 const bot = new Telegraf(TOKEN);
 
-let interval = null;  // Интервал для автоматических сообщений
-let sendTask = null;  // Задача для отправки сообщений
-let timezoneOffset = 2;  // Смещение по времени (по умолчанию 2)
+// Часовой пояс для вашего региона
+const timezoneOffset = 2; // UTC +2, например
 
-const calculateTimeToNewYear = () => {
-  const now = moment().utcOffset(timezoneOffset * 60); // Учитываем временную зону
-  const newYear = moment('2026-01-01T00:00:00');  // Новый год 2026
-  const remainingTime = newYear.diff(now);
+// Настройка Express сервера
+const app = express();
+app.use(express.json());
 
-  const duration = moment.duration(remainingTime);
-  return {
-    days: duration.days(),
-    hours: duration.hours(),
-    minutes: duration.minutes(),
-    seconds: duration.seconds(),
-  };
-};
-
-const startCommand = async (ctx) => {
+// Функция для команды /start
+const start = async (ctx) => {
   await ctx.reply(
-    'Hello! 😎\nHow it works?\n\n' +
-    '"/timezone +2" - set your timezone (for example, +2 hours)\n' +
-    '"/timezone -3" - set your timezone (for example, -3 hours)\n\n' +
-    '/time - find out how many days, hours, and minutes are left until the New Year.\n' +
-    '"/interval 1440" - set the interval in minutes to send messages automatically about the time left to New Year (for example, 1440 minutes = 1 day).\n' +
-    'To turn off the interval, type "/interval -".'
+    'Привет! Напиши /time, чтобы узнать, сколько дней, минут и секунд осталось до Нового года.\n' +
+    'Hello! Type /time to find out how many days, minutes, and seconds are left until New Year.'
   );
 };
 
-const timeCommand = async (ctx) => {
-  const { days, hours, minutes, seconds } = calculateTimeToNewYear();
+// Функция для команды /time
+const timeToNewYear = async (ctx) => {
+  const now = DateTime.utc().plus({ hours: timezoneOffset });  // Учитываем смещение часового пояса
+  const newYear = DateTime.utc().plus({ years: 1 }).startOf('year');  // Новый год в UTC
+  const timeLeft = newYear.diff(now, ['days', 'hours', 'minutes', 'seconds']).toObject();
+
+  const { days, hours, minutes, seconds } = timeLeft;
+
   await ctx.reply(
-    `${days} days, ${hours} hours, and ${minutes} minutes\nTimezone: UTC ${timezoneOffset >= 0 ? '+' + timezoneOffset : timezoneOffset}\n\n🥳🥳🥳`
+    `До Нового года осталось ${days} дней, ${hours} часов, ${minutes} минут и ${seconds} секунд!\n` +
+    `${days} days, ${hours} hours, ${minutes} minutes, and ${seconds} seconds left until New Year!`
   );
 };
 
-const intervalCommand = async (ctx) => {
-  if (!ctx.message.text.split(' ')[1]) {
-    return await ctx.reply(
-      'Enter the interval in minutes or hours for automatic messages about the time until New Year.\n' +
-      'Interval format: number (e.g. "/interval 1" for 1 minute).\n' +
-      'To disable the interval, enter "/interval -".'
-    );
+// Обработчики команд
+bot.command('start', start);
+bot.command('time', timeToNewYear);
+
+// Сервер для работы с вебхуками
+app.post('/api/webhook', async (req, res) => {
+  try {
+    // Обработка входящего запроса
+    await bot.handleUpdate(req.body);
+    res.status(200).json({ status: 'ok' });
+  } catch (e) {
+    console.error('Error processing update:', e);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
+});
 
-  const userInput = ctx.message.text.split(' ')[1];
-  
-  if (userInput === '-') {
-    clearInterval(interval);
-    interval = null;
-    if (sendTask) {
-      sendTask.stop();
-      sendTask = null;
-    }
-    return await ctx.reply('Interval disabled 😢');
-  }
-
-  const intervalInMinutes = parseInt(userInput);
-  
-  if (isNaN(intervalInMinutes) || intervalInMinutes <= 0) {
-    return await ctx.reply(
-      'Error! Invalid interval format. Please use a valid positive number.\n' +
-      'Interval format: number (e.g. "/interval 1" for 1 minute).\n' +
-      'To disable the interval, enter "/interval -".'
-    );
-  }
-
-  interval = intervalInMinutes;
-  await ctx.reply(`Interval set: every ${interval} minute(s). 😍`);
-
-  // Если задача уже существует, останавливаем её перед установкой новой
-  if (sendTask) {
-    clearInterval(sendTask);
-    sendTask = null;
-  }
-
-  sendTask = setInterval(async () => {
-    const { days, hours, minutes, seconds } = calculateTimeToNewYear();
-    try {
-      // Проверка на активность бота
-      if (!ctx.chat) return;
-      await ctx.reply(
-        `${days} days, ${hours} hours, and ${minutes} minutes\nTimezone: UTC ${timezoneOffset >= 0 ? '+' + timezoneOffset : timezoneOffset}\n\n🥳🥳🥳\n\nThis is an automatic message! To stop, type "/interval -".`
-      );
-    } catch (error) {
-      console.error('Error sending automatic message:', error);
-    }
-  }, interval * 60 * 1000); // Время в миллисекундах
-};
-
-const timezoneCommand = async (ctx) => {
-  const newOffset = parseInt(ctx.message.text.split(' ')[1]);
-
-  if (isNaN(newOffset)) {
-    return await ctx.reply(
-      'Error! Please enter a valid number (e.g., "/timezone +2" or "/timezone -3").'
-    );
-  }
-
-  timezoneOffset = newOffset;
-  await ctx.reply(`Time zone set to: UTC ${timezoneOffset >= 0 ? '+' + timezoneOffset : timezoneOffset} 🫡`);
-};
-
-bot.command('start', startCommand);
-bot.command('time', timeCommand);
-bot.command('interval', intervalCommand);
-bot.command('timezone', timezoneCommand);
-
-bot.launch();
+// Запуск сервера на Render
+const port = process.env.PORT || 3000;  // Порт для Render
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
