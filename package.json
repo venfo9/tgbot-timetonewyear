@@ -1,0 +1,8 @@
+{
+  "name": "telegram-bot",
+  "version": "1.0.0",
+  "dependencies": {
+    "telegraf": "^4.7.0",
+    "luxon": "^3.0.1"
+  }
+}
