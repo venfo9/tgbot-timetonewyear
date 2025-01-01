@@ -13,6 +13,6 @@
     "moment-timezone": "^0.5.34"
   },
   "engines": {
-    "node": "16.x"
+    "node": "18.x"
   }
 }
