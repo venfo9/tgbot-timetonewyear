@@ -84,6 +84,8 @@ const intervalCommand = async (ctx) => {
   sendTask = setInterval(async () => {
     const { days, hours, minutes, seconds } = calculateTimeToNewYear();
     try {
+      // Проверка на активность бота
+      if (!ctx.chat) return;
       await ctx.reply(
         `${days} days, ${hours} hours, and ${minutes} minutes\nTimezone: UTC ${timezoneOffset >= 0 ? '+' + timezoneOffset : timezoneOffset}\n\n🥳🥳🥳\n\nThis is an automatic message! To stop, type "/interval -".`
       );
