@@ -1,3 +1,13 @@
+
+Чтобы указать Render использовать порт 0.0.0.0:8080, нужно внести изменения в код. У Render по умолчанию используется переменная окружения PORT, поэтому для корректной работы необходимо указать порт из этой переменной при запуске.
+
+Кроме того, если вы используете webhook, нужно правильно настроить URL для webhook и убедиться, что сервер слушает входящие запросы на правильном порту.
+
+Вот исправленный код:
+
+Исправленный код
+python
+Copy code
 import asyncio
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
@@ -27,26 +37,35 @@ async def time_to_new_year(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
 async def main():
     TOKEN = os.getenv("BOT_TOKEN")
+    if not TOKEN:
+        print("Error: BOT_TOKEN is not set.")
+        return
+
     app = Application.builder().token(TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("time", time_to_new_year))
 
     # Заменяем URL на ваш собственный
-    webhook_url = "https://tgbot-timetonewyear.onrender.com/"
+    webhook_url = os.getenv("WEBHOOK_URL", "https://tgbot-timetonewyear.onrender.com/")
     print(f"Setting webhook to: {webhook_url}")  # Выводим URL для отладки
 
     try:
-        await app.bot.set_webhook(webhook_url)
+        await app.bot.set_webhook(url=webhook_url)
     except Exception as e:
         print(f"Error setting webhook: {e}")
+        return
 
-    # Используем порт, предоставленный Render
-    port = int(os.getenv("PORT", 8443))  # Default to 8443 if not set
-
-    # Вместо создания нового цикла, используем уже существующий
-    print('Бот запущен...')
-    app.run_polling()
+    # Настройка сервера
+    port = int(os.getenv("PORT", 8080))  # 8080 по умолчанию
+    print(f"Starting server on port {port}...")
+    
+    # Запуск веб-сервера
+    await app.run_webhook(
+        listen="0.0.0.0",
+        port=port,
+        url_path=webhook_url.split('/')[-1]
+    )
 
 if __name__ == '__main__':
     main()
