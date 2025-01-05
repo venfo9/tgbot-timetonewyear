@@ -16,7 +16,8 @@ app.use(express.json());
 // Calculate time to New Year
 const calculateTimeToNewYear = () => {
   const now = DateTime.utc().plus({ hours: timezoneOffset });
-  const newYear = DateTime.utc().set({ year: now.year + 1, month: 1, day: 1 });
+  const currentYear = now.year;
+  const newYear = DateTime.utc().set({ year: currentYear + 1, month: 1, day: 1 });
   const diff = newYear.diff(now, ['days', 'hours', 'minutes', 'seconds']).toObject();
 
   return {
@@ -26,6 +27,7 @@ const calculateTimeToNewYear = () => {
     seconds: Math.floor(diff.seconds),
   };
 };
+
 
 // Command: /start
 bot.command('start', async (ctx) => {
