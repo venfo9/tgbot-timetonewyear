@@ -15,18 +15,24 @@ app.use(express.json());
 
 // Calculate time to New Year
 const calculateTimeToNewYear = () => {
-  const now = DateTime.utc().plus({ hours: timezoneOffset });
+  const now = DateTime.utc().plus({ hours: timezoneOffset }); // Текущее время с учетом таймзоны
   const currentYear = now.year;
-  const newYear = DateTime.utc().set({ year: currentYear + 1, month: 1, day: 1 });
+  const newYear = DateTime.utc().set({ year: currentYear + 1, month: 1, day: 1, hour: 0, minute: 0, second: 0 }); // Полночь Нового года
   const diff = newYear.diff(now, ['days', 'hours', 'minutes', 'seconds']).toObject();
 
+  const remainingDays = Math.floor(diff.days);
+  const remainingHours = Math.floor(diff.hours % 24); // Остаток часов до конца дня
+  const remainingMinutes = Math.floor(diff.minutes % 60); // Остаток минут до конца часа
+  const remainingSeconds = Math.floor(diff.seconds % 60); // Остаток секунд до конца минуты
+
   return {
-    days: Math.floor(diff.days),
-    hours: Math.floor(diff.hours),
-    minutes: Math.floor(diff.minutes),
-    seconds: Math.floor(diff.seconds),
+    days: remainingDays,
+    hours: remainingHours,
+    minutes: remainingMinutes,
+    seconds: remainingSeconds,
   };
 };
+
 
 
 // Command: /start
