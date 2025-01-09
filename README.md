@@ -54,19 +54,11 @@ Example:
     ```bash
     bot.telegram.setWebhook('https://your-app-url.onrender.com/api/webhook');
 
-### Usage  
-
-Add the bot to your Telegram.
-
-Start a chat with /start.
-
-Use commands to configure timezone, intervals, or check the remaining time until New Year.
-
 ### Dependencies
 
-Telegraf - Telegram Bot Framework.
+[Telegraf](https://telegraf.js.org/) - Telegram Bot Framework.
 
-Luxon - For time calculations.
+[Luxon](https://moment.github.io/luxon/api-docs/index.html) - For time calculations.
 
-Express - Web framework for handling webhooks.
+[Express]([https://telegraf.js.org/](https://expressjs.com/)) - Web framework for handling webhooks.
 
