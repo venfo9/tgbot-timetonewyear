@@ -39,9 +39,10 @@ Send the `/start` command to get a quick introduction to the bot and its feature
    ```bash  
    git clone https://github.com/YOUR_USERNAME/tgbot-timetonewyear.git  
    cd tgbot-timetonewyear  
+
 2. Install dependencies:
     ```bash
-  npm install  
+     npm install  
 
 3. Create a .env file in the project root and add your bot token:
     ```bash
