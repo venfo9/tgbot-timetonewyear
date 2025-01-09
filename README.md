@@ -60,5 +60,5 @@ Example:
 
 [Luxon](https://moment.github.io/luxon/api-docs/index.html) - For time calculations.
 
-[Express]([https://telegraf.js.org/](https://expressjs.com/)) - Web framework for handling webhooks.
+[Express](https://expressjs.com/) - Web framework for handling webhooks.
 
